@@ -24,6 +24,7 @@ Process and parse both the service and app styles at runtime.
  * The service styles can be native CSS
  * Any CSS file can easily be treated as a sofe css service
  * Potentially easier debugging.
+
 #### Cons
  * Need to include a CSS parser at run-time in the browser. This would
 	 increase the size of sofe.
@@ -39,6 +40,7 @@ Pre-process the service and app styles.
  * Probably faster.
  * Quicker to get sofe with cssm built.
  * Take advantage of Node.js CSS parsing libraries.
+
 #### Cons
  * The distributables of the app and service styles are not CSS but
 	 rather another format that doesn't require parsing.
