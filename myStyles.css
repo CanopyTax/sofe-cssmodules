@@ -1,0 +1,4 @@
+.myBtn {
+  composes: btn from "styleguide!sofe";
+	alpha: .5;
+}

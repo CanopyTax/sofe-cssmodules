@@ -1,4 +1,0 @@
-.myBtn {
-  composes: btn from "./style.css";
-	alpha: .5;
-}
