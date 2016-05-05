@@ -11,6 +11,9 @@ Sofe with CSS Modules
  * If the stylesheet distributable is not native CSS, it should be not
  be drastically larger in size.
 
+## Example
+*[example.js](example.js)*
+
 ## Design
 Because the stylesheets must be loaded at runtime, we must handle both the
 application css and the consumed service css. Handling this either has to
