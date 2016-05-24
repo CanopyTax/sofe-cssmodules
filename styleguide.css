@@ -1,0 +1,8 @@
+:local(.btn) {
+	background: green;
+}
+
+:global(.cps-btn) {
+	/* this is name spaced and global */
+	background: green;
+}
