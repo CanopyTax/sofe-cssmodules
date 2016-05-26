@@ -2,8 +2,8 @@
 import AbstractLoader from './abstractLoader.js';
 
 export default class BrowserLoader extends AbstractLoader {
-  constructor(plugins) {
-    super(plugins);
+  constructor() {
+    super();
 
     this._useStyleTags = !window.Blob || !window.URL || !URL.createObjectURL || navigator.userAgent.match(/phantomjs/i);
     this._cssContainer = document.createElement('css-container');
@@ -17,11 +17,11 @@ export default class BrowserLoader extends AbstractLoader {
     return super.fetch(load, systemFetch)
       .then(this._setBlobUrl.bind(this))
       .then(this._appendStyleSheet.bind(this))
-      .then((styleSheet) => styleSheet.exportedTokens);
+      .then((styleSheet) => typeof styleSheet === 'string' ? styleSheet : styleSheet.exportedTokens);
   }
 
   _setBlobUrl(styleSheet) {
-    if (!this._useStyleTags) {
+    if (!this._useStyleTags && typeof styleSheet !== 'string') {
       const blob = new Blob([styleSheet.injectableSource], { type: 'text/css' });
       styleSheet.blobUrl = URL.createObjectURL(blob);
     }
@@ -30,6 +30,8 @@ export default class BrowserLoader extends AbstractLoader {
   }
 
   _appendStyleSheet(styleSheet) {
+		if (typeof styleSheet === 'string') return styleSheet;
+
     return new Promise((resolve, reject) => {
       if (this._useStyleTags) {
         this._appendStyle(styleSheet);
@@ -55,8 +57,7 @@ export default class BrowserLoader extends AbstractLoader {
   }
 
   _appendLink(styleSheet, resolve, reject) {
-
-    const existing = document.getElementById(styleSheet.name); 
+    const existing = document.getElementById(styleSheet.name);
     if (existing) {
       existing.href = styleSheet.blobUrl;
       resolve(styleSheet);

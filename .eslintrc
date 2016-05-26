@@ -145,7 +145,7 @@
     "jsx-quotes": [ 0 ],
     "key-spacing": [ 2 ],
     "lines-around-comment": [ 0 ],
-    "linebreak-style": [ 2, "windows" ],
+    "linebreak-style": [ 2, "unix" ],
     "max-nested-callbacks": [ 2 ],
     "new-cap": [ 2 ],
     "new-parens": [ 2 ],

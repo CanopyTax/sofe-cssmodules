@@ -1,6 +1,7 @@
 /* eslint-env node */
 import AbstractLoader from './abstractLoader.js';
 import cssnano from 'cssnano';
+import css from 'css';
 
 // Append a <style> tag to the page and fill it with inline CSS styles.
 const cssInjectFunction = `(function(c){
@@ -23,10 +24,6 @@ const escape = (source) => {
     .replace(/[\u2029]/g, '\\u2029');
 };
 
-const emptySystemRegister = (system, name) => {
-  return `${system}.register('${name}', [], function() { return { setters: [], execute: function() {}}});`;
-};
-
 export default class NodeLoader extends AbstractLoader {
   constructor(plugins) {
     super(plugins);
@@ -38,14 +35,64 @@ export default class NodeLoader extends AbstractLoader {
   }
 
   fetch(load, systemFetch) {
-    return super.fetch(load, systemFetch)
+    return super.fetch(load, systemFetch, this.processSofe.bind(this))
       .then((styleSheet) => {
         this._injectableSources.push(styleSheet.injectableSource);
         return styleSheet;
       })
       // Return the export tokens to the js files
-      .then((styleSheet) => styleSheet.exportedTokens);
+			.then((styleSheet) => styleSheet.exportedTokens)
+			.catch((err) => { throw err; });
   }
+
+	processSofe(source, tokens) {
+		const ast = css.parse(source);
+		let services = [];
+
+		const newTokens = ast.stylesheet.rules
+			.filter(outNonComposeRules)
+			.reduce(toNewTokensObject, tokens);
+
+		return {
+			tokens: newTokens, services
+		};
+
+		function outNonComposeRules(rule) {
+			// At least one declaration in the rule is 'composes' and is sofe
+			return rule.declarations.filter(dec => {
+				return dec.property === 'composes' && dec.value.indexOf('!sofe') > -1;
+			}).length;
+		}
+
+		function toNewTokensObject(tokens, rule) {
+			return {
+				...tokens,
+				[rule.selectors[0].substring(1)]: tokens[rule.selectors[0].substring(1)] + getServiceClassNames(rule)
+			};
+		}
+
+		function getServiceClassNames(rule) {
+			return rule.declarations.reduce((className, dec) => {
+				if (dec.property === 'composes' && dec.value.indexOf('!sofe') > -1) {
+					let groups = (/(.+)\W*from\W*('|")(.+)!sofe('|")/g).exec(dec.value);
+					let service = groups[3];
+					let importedClass = groups[1].trim();
+
+					if (service.indexOf('.') > -1) {
+						service = service.substring(0, service.indexOf('.'));
+					}
+
+					if (services.indexOf(service) === -1) {
+						services = [...services, service];
+					}
+
+					return ` _sofe_${service}__${importedClass}`;
+				} else {
+					return className;
+				}
+			}, ' ');
+		}
+	}
 
   bundle(loads, compileOpts, outputOpts) {
     /*eslint-disable no-console */
@@ -67,14 +114,8 @@ export default class NodeLoader extends AbstractLoader {
       // safe: true ensures no optimizations are applied which could potentially break the output.
       safe: true
     }).then((result) => {
-      // Take all of the CSS files which need to be output and generate a fake System registration for them.
-      // This will make System believe all files exist as needed.
-      // Then, take the combined output of all the CSS files and generate a single <style> tag holding all the info.
-      const fileDefinitions = loads
-        .map((load) => emptySystemRegister(compileOpts.systemGlobal || 'System', load.name))
-        .join('\n');
-
-      return `${fileDefinitions}${cssInjectFunction}('${escape(result.css)}');`;
-    });
+      return `${cssInjectFunction}('${escape(result.css)}');`;
+		}).catch((err) => { throw err });
   }
+
 }
