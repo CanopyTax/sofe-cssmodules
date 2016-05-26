@@ -83,7 +83,7 @@ export default class NodeLoader extends AbstractLoader {
 					}
 
 					if (services.indexOf(service) === -1) {
-						services = [...services, service];
+						services.push(service);
 					}
 
 					return ` _sofe_${service}__${importedClass}`;
