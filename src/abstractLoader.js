@@ -29,8 +29,9 @@ export default class CSSModuleLoaderProcess {
 								CssModulesLoaderCore.extractImports,
 								CssModulesLoaderCore.scope,
 							]);
-							return this._cssModulesLoader.load(source, sourcePath, '', this._fetchDependencies.bind(this))
-						});
+							resolve(this._cssModulesLoader.load(source, sourcePath, '', this._fetchDependencies.bind(this)));
+						})
+						.catch(reject);
 				});
 			})
       .then((args) => {
@@ -51,6 +52,7 @@ export default class CSSModuleLoaderProcess {
           // During development, if supported, use a Proxy to detect missing CSS declarations.
           // Note the wrapping `'s - this is code exported as a string and executed later.
           exportedTokens = `
+						${this.getSofeDependencies(result ? result.services : [])}
             const styles = JSON.parse('${exportTokensString}');
             const propertyWhitelist = ['__esModule', 'then', 'default', 'trim'];
             const proxy = new Proxy(styles, {
