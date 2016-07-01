@@ -24,7 +24,7 @@ console.log(chalk.blue('Building ') + inputFile);
 
 postcss([
   require('postcss-modules')({
-		scopeBehaviour: 'global',
+		scopeBehaviour: 'local',
     generateScopedName: function(name, filename, css) {
       return '_sofe_' + argv.s + '__' + name;
 		},
