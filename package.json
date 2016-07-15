@@ -8,8 +8,7 @@
     "css": "^2.2.1",
     "css-modules-loader-core": "^1.0.0-beta2",
     "cssnano": "^3.5.2",
-    "minimist": "^1.2.0",
-    "pre-publish": "npm run build"
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
     "ava": "^0.12.0",
@@ -25,7 +24,8 @@
     "pretest": "npm run lint",
     "test": "ava --require babel-core/register",
     "lint": "eslint src test",
-    "build": "babel src --out-dir lib"
+    "build": "babel src --out-dir lib",
+    "pre-publish": "npm run build"
   },
   "repository": {
     "type": "git",
