@@ -1,7 +1,7 @@
 {
   "name": "sofe-css-modules",
   "main": "lib/index.js",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A CSS Modules + PostCSS plugin loader for JSPM.",
   "dependencies": {
     "chalk": "^1.1.3",
