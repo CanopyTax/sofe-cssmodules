@@ -1,5 +1,5 @@
 {
-  "name": "jspm-loader-css",
+  "name": "sofe-css-modules",
   "main": "lib/index.js",
   "version": "1.0.2",
   "description": "A CSS Modules + PostCSS plugin loader for JSPM.",
@@ -8,7 +8,8 @@
     "css": "^2.2.1",
     "css-modules-loader-core": "^1.0.0-beta2",
     "cssnano": "^3.5.2",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+		"pre-publish": "npm run build"
   },
   "devDependencies": {
     "ava": "^0.12.0",
@@ -47,5 +48,6 @@
     "browser": {
       "cssnano": false
     }
-  }
+  },
+	"files": ["lib"]
 }
